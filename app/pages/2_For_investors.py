@@ -67,8 +67,8 @@ for i, (s, m) in enumerate(results):
             st.markdown(f"<small>**Ask:** {m['confirm']}</small>", unsafe_allow_html=True)
         if m["verdict"] != NOT_ELIGIBLE:
             if s["name"] in ss.shortlist:
-                st.button("✓ Shortlisted", key=f"sl_{s['name']}", disabled=True, use_container_width=True)
-            elif st.button("Shortlist", key=f"sl_{s['name']}", use_container_width=True):
+                st.button("✓ Shortlisted", key=f"sl_{s['name']}", disabled=True, width="stretch")
+            elif st.button("Shortlist", key=f"sl_{s['name']}", width="stretch"):
                 ss.shortlist.append(s["name"])
                 st.rerun()
         with st.expander("Evidence"):

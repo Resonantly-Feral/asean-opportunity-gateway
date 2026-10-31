@@ -33,6 +33,7 @@ ss.setdefault("history", [])   # past assessments, newest last
 ss.setdefault("tracker", [])   # applications the founder is tracking
 
 TRACK_STATES = ["Interested", "Preparing", "Submitted", "Interview", "Accepted", "Rejected"]
+DEMO_SLIDE = Path(__file__).resolve().parent.parent / "data" / "kedailink-risk-slide.png"
 SAMPLES = json.loads((Path(__file__).resolve().parent.parent / "data" / "samples.json").read_text())
 LEVEL_ICON = {"All addressed": "🟢", "Partly addressed": "🟡", "None addressed": "🔴"}
 VERDICT_ICON = {ELIGIBLE: "✅", UNCLEAR: "❔", NOT_ELIGIBLE: "⛔"}
@@ -61,17 +62,28 @@ with submit_tab:
     case = next(x for x in SAMPLES if x["name"] == pick)
     c1.caption(f"What to look for: {case['expect']}")
     c2.write("")
-    if c2.button("Load sample submission", use_container_width=True):
+    if c2.button("Load sample submission", width="stretch"):
         ss.idea_text = case["text"]
     text = st.text_area("Describe your startup idea", height=260, key="idea_text",
                         placeholder="Problem, customers, solution, traction, team, business model, next milestone…")
     slides = st.file_uploader("Pitch deck pages (optional, images)", type=["png", "jpg", "jpeg"],
                               accept_multiple_files=True)
+    demo_slide = DEMO_SLIDE.read_bytes() if DEMO_SLIDE.exists() else None
+    use_demo_slide = False
+    if demo_slide:
+        d1, d2 = st.columns([3, 1])
+        use_demo_slide = d1.checkbox("Add demo pitch slide: KedaiLink \"Risks we are testing\" "
+                                     "(Gemma 4 reads images)")
+        if use_demo_slide:
+            d2.image(demo_slide, caption="Demo slide", width="stretch")
 
     if st.button("Check my startup", type="primary", disabled=not text.strip()):
         with st.spinner(f"Gemma ({gemma.model_name()}) is reading your submission…"):
             try:
-                data = gemma.extract(text, [(f.getvalue(), f.type) for f in slides or []])
+                images = [(f.getvalue(), f.type) for f in slides or []]
+                if use_demo_slide:
+                    images.append((demo_slide, "image/png"))
+                data = gemma.extract(text, images)
             except Exception as e:
                 st.error(f"Extraction failed: {e}")
                 st.stop()

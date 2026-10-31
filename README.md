@@ -171,12 +171,14 @@ application windows are shown as closed. Always confirm on the official page.
 
 ## Team
 
-| Member | Area |
+Team ULJV, table 2, Hacktoberfest Hack Day KL 2026.
+
+| Member | Background |
 |---|---|
-| TODO | Gemma prompt + extraction (`app/gemma.py`) |
-| TODO | Real programme data + matching (`data/`, `app/matching.py`) |
-| TODO | UI, tracker, deployment (`app/main.py`) |
-| TODO | Demo video, README, submission |
+| Stepphrnie Davina Parameswaran | Data, product / business |
+| Christopher Teh | Frontend development, data, UI/UX design |
+| Mohammed Rashid | Frontend, backend and full-stack development |
+| Chaw Chee Woh | AI / machine learning, product / business |
 
 ## Submission checklist (OrganizerHQ, 3:00 PM hard deadline)
 

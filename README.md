@@ -1,8 +1,11 @@
 # ASEAN Opportunity Gateway
 
-**Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/
+🏅 **Top 5 finalist: 5th place out of 48 teams at Hacktoberfest Hack Day Kuala Lumpur 2026**
 
-Hacktoberfest Hack Day Kuala Lumpur 2026.
+**Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/
+**Demo video:** https://www.youtube.com/watch?v=NiUvv33ymUg
+
+Built in one day at Hacktoberfest Hack Day Kuala Lumpur 2026 (31 October 2026), organised by MLH, MyStartup Cradle, Kracked Devs and TalentLabs.
 
 ## Problem statement (2)
 
@@ -166,7 +169,7 @@ application windows are shown as closed. Always confirm on the official page.
 - [ ] Public repo with LICENSE in the root
 - [ ] README: problem, solution, setup, how to run
 - [x] Live demo link, or local run instructions for judges
-- [ ] Demo video under 3 minutes, public on YouTube or Vimeo (render by 2:30 PM)
+- [x] Demo video under 3 minutes, public on YouTube or Vimeo (render by 2:30 PM)
 - [ ] Project description: problem statement, solution, how it works, tech,
       target users, what makes it unique
 

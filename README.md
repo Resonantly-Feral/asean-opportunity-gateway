@@ -2,7 +2,7 @@
 
 🏅 **Top 5 finalist: 5th place out of 48 teams at Hacktoberfest Hack Day Kuala Lumpur 2026**
 
-**Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/
+**Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/  
 **Demo video:** https://www.youtube.com/watch?v=NiUvv33ymUg
 
 Built in one day at Hacktoberfest Hack Day Kuala Lumpur 2026 (31 October 2026), organised by MLH, MyStartup Cradle, Kracked Devs and TalentLabs.

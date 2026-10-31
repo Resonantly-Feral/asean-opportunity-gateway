@@ -1,6 +1,6 @@
 # ASEAN Opportunity Gateway
 
-🏅 **5th place out of 48 teams at Hacktoberfest Hack Day Kuala Lumpur 2026**
+🏅 **Top 5 finalist: shortlisted from 48 teams at Hacktoberfest Hack Day Kuala Lumpur 2026**
 
 **Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/  
 **Demo video:** https://www.youtube.com/watch?v=NiUvv33ymUg

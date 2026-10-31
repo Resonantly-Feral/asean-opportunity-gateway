@@ -45,6 +45,8 @@ h1.info("**1. Describe your startup**\n\nIn plain words, like a short pitch.")
 h2.info("**2. See what's backed up**\n\n9 simple questions. AI finds the sentences; fixed rules decide.")
 h3.info("**3. Find programmes that may fit**\n\nReal ASEAN grants and accelerators, with reasons and what to confirm.")
 st.caption("We check evidence. We never predict success or give made-up percentages.")
+st.page_link("pages/2_For_investors.py", label="Investor or programme manager? Screen startups with your own framework →",
+             icon="💼")
 
 DISCLAIMER = ("This is a checklist of what the founder has stated. Nothing here is verified, "
               "and it is not an approval or endorsement by any programme.")

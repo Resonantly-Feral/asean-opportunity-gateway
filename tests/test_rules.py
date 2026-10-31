@@ -193,3 +193,13 @@ def test_unregistered_team_route_is_explained():
                "incorporated": False, "team_size": 3}, prog, [])
     assert m["verdict"] == ELIGIBLE
     assert any("can apply as individuals" in r for r in m["reasons"])
+
+
+def test_investor_must_have_gates_fit():
+    from app.investor import load_startups, screen_all
+    startups = load_startups()
+    fw = {"countries": ["ANY_ASEAN"], "stages": ["idea", "prototype", "early revenue", "growth"],
+          "sectors": ["ANY"], "required_evidence": ["demand_evidence"]}
+    res = {s["name"]: m["verdict"] for s, m in screen_all(startups, fw)}
+    assert res["FarmAI (idea only)"] == NOT_ELIGIBLE
+    assert res["TutorGo (weak pitch)"] == NOT_ELIGIBLE

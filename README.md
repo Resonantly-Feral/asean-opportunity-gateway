@@ -1,5 +1,7 @@
 # ASEAN Opportunity Gateway
 
+**Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/
+
 Hacktoberfest Hack Day Kuala Lumpur 2026.
 
 ## Problem statement (2)
@@ -162,7 +164,7 @@ application windows are shown as closed. Always confirm on the official page.
 
 - [ ] Public repo with LICENSE in the root
 - [ ] README: problem, solution, setup, how to run
-- [ ] Live demo link, or local run instructions for judges
+- [x] Live demo link, or local run instructions for judges
 - [ ] Demo video under 3 minutes, public on YouTube or Vimeo (render by 2:30 PM)
 - [ ] Project description: problem statement, solution, how it works, tech,
       target users, what makes it unique

@@ -21,8 +21,9 @@ st.markdown("#### Set your own evaluation framework. See which ASEAN startups fi
 st.caption("Your framework is applied by the same fixed rules as the founder side. "
            "No AI judgment, no success percentages. Startups below are demo examples.")
 
-VERDICT = {ELIGIBLE: ("✅", "Fits your framework"), UNCLEAR: ("❔", "Need one answer first"),
-           NOT_ELIGIBLE: ("⛔", "Not a fit")}
+VERDICT = {ELIGIBLE: ":green-background[✅ Fits your framework]",
+           UNCLEAR: ":orange-background[❔ Need one answer first]",
+           NOT_ELIGIBLE: ":red-background[⛔ Not a fit]"}
 
 with st.container(border=True):
     st.subheader("1. Your framework")
@@ -49,29 +50,31 @@ results = screen_all(load_startups(), framework)
 fits = sum(m["verdict"] == ELIGIBLE for _, m in results)
 st.subheader(f"2. Startups that fit: {fits} of {len(results)}")
 
-for s, m in results:
-    icon, label = VERDICT[m["verdict"]]
+cols = st.columns(3)
+for i, (s, m) in enumerate(results):
     p = s["data"].get("profile", {})
     summary = s["data"].get("summary", {})
-    with st.container(border=True):
-        a, b = st.columns([4, 1])
-        a.markdown(f"### {icon} {s['name']}: {label}")
-        a.caption(f"{p.get('country') or 'Country not stated'} · {p.get('stage') or 'stage not stated'} · "
-                  f"{p.get('sector') or 'sector not stated'} · {m['met']} of 9 questions backed by evidence")
+    with cols[i % 3].container(border=True):
+        st.markdown(f"**{s['name']}**  \n{VERDICT[m['verdict']]}")
+        st.caption(f"{p.get('country') or '?'} · {p.get('stage') or '?'} · {p.get('sector') or '?'}  \n"
+                   f"{m['met']} of 9 questions backed")
         if summary.get("problem"):
-            a.markdown(f"**Problem:** {summary['problem']}")
-        for r in m["reasons"]:
-            a.markdown(f"- {r}")
+            st.markdown(f"<small>{summary['problem']}</small>", unsafe_allow_html=True)
+        reasons = [r for r in m["reasons"] if r != "Meets the requirements this app checks"]
+        for r in reasons:
+            st.markdown(f"<small>• {r}</small>", unsafe_allow_html=True)
         if m["confirm"]:
-            a.markdown(f"**Ask the founder:** {m['confirm']}")
-        if m["verdict"] != NOT_ELIGIBLE and s["name"] not in ss.shortlist:
-            if b.button("Shortlist", key=f"sl_{s['name']}"):
+            st.markdown(f"<small>**Ask:** {m['confirm']}</small>", unsafe_allow_html=True)
+        if m["verdict"] != NOT_ELIGIBLE:
+            if s["name"] in ss.shortlist:
+                st.button("✓ Shortlisted", key=f"sl_{s['name']}", disabled=True, use_container_width=True)
+            elif st.button("Shortlist", key=f"sl_{s['name']}", use_container_width=True):
                 ss.shortlist.append(s["name"])
                 st.rerun()
-        with a.expander("Evidence"):
+        with st.expander("Evidence"):
             for r in s["results"]:
                 mark = "✅" if r["status"] == "Evidence stated" else "⚠️"
-                st.markdown(f"{mark} {r['question']}" + (f"  \n> “{r['quote']}”" if r["quote"] else ""))
+                st.markdown(f"<small>{mark} {r['question']}</small>", unsafe_allow_html=True)
 
 st.subheader("3. Your shortlist")
 if not ss.shortlist:

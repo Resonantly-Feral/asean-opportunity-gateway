@@ -13,10 +13,11 @@
 2. **Fixed rules decide, not the AI.** A quote only counts if it really appears in the founder's text and passes a hard rule. Demand evidence needs a number, a milestone needs a date, a prototype must exist rather than be planned, and a negation such as "we haven't built a prototype" never counts.
 3. **Eligibility rules** check the profile against each programme's published requirements. The result is Eligible, Not eligible (with the reason), or Unclear (with the one question that would settle it). Requirements the app can't check are shown for the founder to confirm.
 4. **Track and improve:** founders track application status, update their idea and see what changed.
+5. **Investor side:** investors and programme managers set their own evaluation framework (countries, stages, sectors, must-have evidence). The same rules screen startups against it, and investors shortlist the ones to meet. This connects both sides of the ecosystem in one gateway.
 
 **Technologies:** Gemma 4 (`gemma-4-26b-a4b-it`) through the Gemini API (Google AI Studio), Python, Streamlit, Streamlit Community Cloud, pytest.
 
-**Target users:** Early-stage founders across ASEAN looking for grants, accelerators and funding. It's also useful for ecosystem bodies like Startup ASEAN, giving them one consistent intake point for every programme.
+**Target users:** Early-stage founders across ASEAN looking for grants, accelerators and funding, and investors and programme managers looking for startups that fit their criteria. It's also useful for ecosystem bodies like Startup ASEAN, giving them one consistent intake point for every programme.
 
 **What makes it unique:**
 - **No fake success predictions.** It measures evidence and eligibility, never a "% chance of success".

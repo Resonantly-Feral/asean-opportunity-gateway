@@ -74,6 +74,13 @@ Gemma reads the language. Fixed rules make every decision.
 7. **Track and improve:** track applications and their status. Editing the idea
    and assessing again shows what changed since the last version.
 
+**Investor side (page "For investors"):** investors and programme managers set
+their own framework (countries, stages, sectors, must-have evidence, registered
+company, minimum team size). The same fixed rules screen startups against it,
+and investors shortlist the ones that fit. The demo startups' Gemma extractions
+are stored in `data/demo_startups.json`, so screening is instant; the rules run
+fresh every time.
+
 Strengths and assumptions from Gemma are shown as AI observations. They are
 never scored.
 
@@ -132,7 +139,9 @@ application windows are shown as closed. Always confirm on the official page.
 
 ## Repo layout
 
-- `app/main.py`: Streamlit UI
+- `app/main.py`: Streamlit UI (founder side)
+- `app/pages/2_For_investors.py`: investor side
+- `app/investor.py`: investor framework screening
 - `app/gemma.py`: Gemma 4 extraction (the only AI step)
 - `app/readiness.py`: readiness criteria and rules
 - `app/matching.py`: programme eligibility rules

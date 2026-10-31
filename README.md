@@ -167,6 +167,8 @@ application windows are shown as closed. Always confirm on the official page.
 - `app/matching.py`: programme eligibility rules
 - `data/`: programme data and 7 demo cases (`samples.json`)
 - `tests/`: rule tests
+- `docs/v2-plan.md`: next version (Gateway + Bridge follow-through)
+- `docs/hackathon-playbook.md`: speedrun checklist for the next hackathon
 - `docs/`: technical notes
 
 ## Team

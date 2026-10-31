@@ -12,7 +12,8 @@ from dotenv import load_dotenv
 
 from app import anomalies, gemma
 from app.matching import ELIGIBLE, NOT_ELIGIBLE, UNCLEAR, load_programmes, match_all
-from app.readiness import AREAS, CRITERIA, EVIDENCED, NOT_ACHIEVED, apply_conflicts, area_summary, assess, changes, gaps
+from app.readiness import (AREAS, CRITERIA, EVIDENCED, NOT_ACHIEVED, PLAIN, apply_conflicts,
+                           area_summary, assess, changes, gaps)
 
 load_dotenv()
 try:
@@ -31,16 +32,21 @@ TRACK_STATES = ["Interested", "Preparing", "Submitted", "Interview", "Accepted",
 SAMPLES = json.loads((Path(__file__).resolve().parent.parent / "data" / "samples.json").read_text())
 LEVEL_ICON = {"All addressed": "🟢", "Partly addressed": "🟡", "None addressed": "🔴"}
 VERDICT_ICON = {ELIGIBLE: "✅", UNCLEAR: "❔", NOT_ELIGIBLE: "⛔"}
+VERDICT_PLAIN = {ELIGIBLE: "You qualify", UNCLEAR: "Need one answer first", NOT_ELIGIBLE: "Not a fit right now"}
 
 st.title("🌏 ASEAN Opportunity Gateway")
-st.caption("Submit an idea → check readiness against fixed criteria → find ASEAN programmes "
-           "you qualify for → track applications. We assess evidence; we never predict success.")
+st.markdown("#### One place for ASEAN startups to see what's missing and where they qualify.")
+h1, h2, h3 = st.columns(3)
+h1.info("**1. Describe your startup**\n\nIn plain words, like a short pitch.")
+h2.info("**2. See what's backed up**\n\n9 simple questions. AI finds the sentences; fixed rules decide.")
+h3.info("**3. Find programmes you qualify for**\n\nReal ASEAN grants and accelerators, with reasons.")
+st.caption("We check evidence. We never predict success or give made-up percentages.")
 
 DISCLAIMER = ("This is a checklist of what the founder has stated. Nothing here is verified, "
               "and it is not an approval or endorsement by any programme.")
 
 submit_tab, match_tab, track_tab, rubric_tab = st.tabs(
-    ["1. Submit & assess", "2. Programmes", "3. Tracker", "Rubric"])
+    ["1. Check my startup", "2. Programmes for me", "3. My applications", "How it works"])
 
 with submit_tab:
     ss.setdefault("idea_text", "")
@@ -56,7 +62,7 @@ with submit_tab:
     slides = st.file_uploader("Pitch deck pages (optional, images)", type=["png", "jpg", "jpeg"],
                               accept_multiple_files=True)
 
-    if st.button("Assess readiness", type="primary", disabled=not text.strip()):
+    if st.button("Check my startup", type="primary", disabled=not text.strip()):
         with st.spinner(f"Gemma ({gemma.model_name()}) is reading your submission…"):
             try:
                 data = gemma.extract(text, [(f.getvalue(), f.type) for f in slides or []])
@@ -74,72 +80,74 @@ with submit_tab:
     if ss.history:
         run = ss.history[-1]
         data, results = run["data"], run["results"]
+        flags, conflicts = run.get("anomalies", []), run.get("conflicts", [])
+        summary = area_summary(results)
+        met = sum(v["met"] for v in summary.values())
+        total = sum(v["total"] for v in summary.values())
+        matches = match_all(data.get("profile", {}), load_programmes(), results)
+        fits = [m for m in matches if m["verdict"] == ELIGIBLE]
+
+        st.divider()
+        st.subheader("At a glance")
+        with st.container(border=True):
+            k1, k2, k3 = st.columns(3)
+            k1.metric("Questions backed by evidence", f"{met} of {total}")
+            k2.metric("Programmes you qualify for", f"{len(fits)} of {len(matches)}")
+            k3.metric("Warnings", len(flags) + len(conflicts))
+            for area, v in summary.items():
+                words = {"All addressed": "all answered", "Partly addressed": "partly answered",
+                         "None addressed": "not answered yet"}[v["level"]]
+                st.markdown(f"{LEVEL_ICON[v['level']]} **{area}:** {words} ({v['met']} of {v['total']})")
+            if fits:
+                st.markdown("🎯 **Best fit now:** " + ", ".join(m["programme"]["name"] for m in fits))
 
         if len(ss.history) > 1:
             gained, lost = changes(ss.history[-2]["results"], results)
             if gained or lost:
-                st.info("**Since your last version:** "
-                        + "; ".join([f"now evidenced: {g['question']}" for g in gained]
-                                    + [f"no longer evidenced: {l['question']}" for l in lost]))
+                st.success("**Since your last version:** "
+                           + "; ".join([f"now backed: {g['question']}" for g in gained]
+                                       + [f"no longer backed: {l['question']}" for l in lost]))
 
-        flags = run.get("anomalies", [])
         if flags:
-            st.warning("**⚠️ Anomalies: instruction-like text found in the submission.** "
-                       "It was not obeyed and did not change any result.\n\n"
-                       + "\n".join(f"- “{f['text']}” _(flagged by {f['flagged_by']})_" for f in flags))
-        else:
-            st.caption("Anomalies: none found.")
-        conflicts = run.get("conflicts", [])
+            st.warning("**⚠️ Someone tried to trick the AI.** This text tried to change the result. "
+                       "It was ignored.\n\n"
+                       + "\n".join(f"- “{f['text']}”" for f in flags))
         if conflicts:
-            st.warning("**⚠️ Conflicting claims detected.** The submission contradicts itself. "
-                       "Neither claim is counted as evidence until the founder clarifies.\n\n"
+            st.warning("**⚠️ The submission contradicts itself.** Neither claim counts until it's cleared up.\n\n"
                        + "\n".join(f"- “{c['first']}” vs “{c['second']}”" for c in conflicts))
-
-        st.subheader("What Gemma extracted")
-        s = data.get("summary", {})
-        c1, c2, c3 = st.columns(3)
-        c1.markdown(f"**Problem**\n\n{s.get('problem') or '_not stated_'}")
-        c2.markdown(f"**Solution**\n\n{s.get('solution') or '_not stated_'}")
-        c3.markdown(f"**Target market**\n\n{s.get('target_market') or '_not stated_'}")
-
-        st.subheader("Evidence described (rules, not AI judgment)")
-        st.caption("Shows whether the founder has addressed each question with stated evidence. "
-                   "It does not mean the evidence is validated or that the startup is commercially viable.")
-        cols = st.columns(3)
-        for col, (area, v) in zip(cols, area_summary(results).items()):
-            col.metric(area, f"{LEVEL_ICON[v['level']]} {v['level']}", f"{v['met']} of {v['total']} criteria described",
-                       delta_color="off")
-
-        for area in AREAS:
-            with st.expander(area, expanded=True):
-                for r in [r for r in results if r["area"] == area]:
-                    icon = {EVIDENCED: "✅", NOT_ACHIEVED: "⭕"}.get(r["status"], "⚠️")
-                    line = f"{icon} **{r['question']}** — {r['status']}"
-                    if r["reason"]:
-                        line += f": {r['reason']}"
-                    if r["quote"]:
-                        line += f"\n\n> “{r['quote']}” _({r['source_label']})_"
-                    st.markdown(line)
 
         g = gaps(results)
         if g:
-            st.subheader("Gaps to close")
-            for r in g:
-                st.markdown(f"- {r['question']}")
+            st.subheader("Top things to do next")
+            for i, r in enumerate(g[:3], 1):
+                st.markdown(f"**{i}.** {r['action']}")
+            if len(g) > 3:
+                st.caption(f"+ {len(g) - 3} more in the details below.")
 
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("**Strengths** _(AI observation, not scored)_")
-            for x in data.get("strengths", []):
-                st.markdown(f"- {x}")
-        with c2:
-            st.markdown("**Unproven assumptions** _(AI observation, not scored)_")
-            for x in data.get("assumptions", []):
-                st.markdown(f"- {x}")
+        with st.expander("See the evidence behind every answer"):
+            s = data.get("summary", {})
+            st.markdown(f"**Problem:** {s.get('problem') or '_not stated_'}  \n"
+                        f"**Solution:** {s.get('solution') or '_not stated_'}  \n"
+                        f"**Target market:** {s.get('target_market') or '_not stated_'}")
+            for area in AREAS:
+                st.markdown(f"#### {area}")
+                for r in [r for r in results if r["area"] == area]:
+                    icon = {EVIDENCED: "✅", NOT_ACHIEVED: "⭕"}.get(r["status"], "⚠️")
+                    line = f"{icon} **{r['question']}** {PLAIN[r['status']]}"
+                    if r["reason"] and r["status"] != NOT_ACHIEVED:
+                        line += f" ({r['reason']})"
+                    if r["quote"]:
+                        line += f"\n\n> “{r['quote']}” _({r['source_label']})_"
+                    elif r["status"] != EVIDENCED:
+                        line += f"\n\n_To fix: {r['action']}_"
+                    st.markdown(line)
 
-        st.info(DISCLAIMER)
-        st.caption("To improve: edit your description with new evidence and assess again. "
-                   "Changes since the last version are shown at the top.")
+        with st.expander("AI notes (for discussion only, never scored)"):
+            c1, c2 = st.columns(2)
+            c1.markdown("**Strengths**\n\n" + "\n".join(f"- {x}" for x in data.get("strengths", [])))
+            c2.markdown("**Claims without proof**\n\n" + "\n".join(f"- {x}" for x in data.get("assumptions", [])))
+
+        st.caption(DISCLAIMER + " To improve, edit the description and check again.")
 
 with match_tab:
     if not ss.history:
@@ -147,8 +155,9 @@ with match_tab:
     else:
         run = ss.history[-1]
         profile = dict(run["data"].get("profile", {}))
-        st.markdown("**Startup profile** (extracted by Gemma, correct anything wrong):")
-        c = st.columns(5)
+        headline = st.empty()
+        exp = st.expander("Details we used to match (edit if anything is wrong)")
+        c = exp.columns(5)
         profile["country"] = c[0].text_input("Country", profile.get("country") or "") or None
         profile["stage"] = c[1].selectbox("Stage", [None, "idea", "prototype", "early revenue", "growth"],
                                           index=[None, "idea", "prototype", "early revenue", "growth"]
@@ -162,24 +171,27 @@ with match_tab:
         size = c[4].number_input("Team size (0 = unknown)", 0, 100, profile.get("team_size") or 0)
         profile["team_size"] = size or None
 
-        st.caption("Programme facts come from published pages, checked 31/10/2026. "
+        st.caption("Programme facts come from official pages, checked 31/10/2026. "
                    "Requirements change: always confirm on the official page before applying.")
-        for m in match_all(profile, load_programmes(), run["results"]):
+        matched = match_all(profile, load_programmes(), run["results"])
+        n_fit = sum(m["verdict"] == ELIGIBLE for m in matched)
+        headline.subheader(f"You qualify for {n_fit} of {len(matched)} programmes")
+        for m in matched:
             p = m["programme"]
             with st.container(border=True):
-                st.markdown(f"### {VERDICT_ICON[m['verdict']]} {p['name']} — {m['verdict']}")
+                st.markdown(f"### {VERDICT_ICON[m['verdict']]} {p['name']}: {VERDICT_PLAIN[m['verdict']]}")
                 st.caption(f"{p.get('type', '')} · {', '.join(p.get('countries', []))} · "
                            f"Source: {p.get('source', 'not stated')}")
                 st.markdown(p.get("offer", ""))
                 for r in m["reasons"]:
                     st.markdown(f"- {r}")
                 if p.get("not_checked"):
-                    st.markdown("**Also required, not checked by this app (confirm yourself):**\n"
+                    st.markdown("**Also required (check yourself):**\n"
                                 + "\n".join(f"- {x}" for x in p["not_checked"]))
                 if m["confirm"]:
-                    st.markdown(f"**To settle this, confirm:** {m['confirm']}")
+                    st.markdown(f"**One question to answer:** {m['confirm']}")
                 if m["outstanding"]:
-                    st.markdown("**Milestone risk — evidence this programme asks for that you haven't shown:**")
+                    st.markdown("**What this programme will want to see, that's missing:**")
                     for o in m["outstanding"]:
                         st.markdown(f"- {o}")
                 if p.get("status"):

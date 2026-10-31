@@ -16,7 +16,7 @@
   },
   {
     "name": "Mixed evidence: some proof, some not",
-    "expect": "Expect 6 of 9: ⭕ for 0 interviews and no pricing, ⚠️ for no named risk.",
+    "expect": "Expect about 6 of 9: ⭕ for 0 interviews and no pricing, ⚠️ for no named risk.",
     "text": "We are building a soil monitoring app for small durian farms in Pahang. Farmers struggle to detect root disease early. We interviewed 0 farmers and have no customer validation. We built a working prototype that measures soil moisture. Our team includes one agronomist and two software developers. We have not decided how to charge customers. Our next milestone is to test the prototype on 5 farms by June 2027."
   },
   {

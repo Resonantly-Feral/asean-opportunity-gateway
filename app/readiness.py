@@ -10,43 +10,43 @@ import re
 MONTHS = r"jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec"
 
 CRITERIA = [
-    {"id": "problem", "area": "Market demand",
+    {"id": "problem", "action": "Describe the exact problem, and who has it, in one sentence.", "area": "Market demand",
      "question": "Is a specific customer problem described?",
      "counts": "A concrete pain for a specific group, e.g. \"shop owners only notice empty shelves after customers ask\"",
      "not_counts": "Vague claims like \"people struggle\" or \"it's inefficient\""},
-    {"id": "customer", "area": "Market demand",
+    {"id": "customer", "action": "Name your first customer group precisely (who, where, how big).", "area": "Market demand",
      "question": "Is a target customer segment named?",
      "counts": "A named group, e.g. \"independent clinics with 1 to 5 doctors\"",
      "not_counts": "\"Everyone\", \"all businesses\", \"the mass market\""},
-    {"id": "demand_evidence", "area": "Market demand",
+    {"id": "demand_evidence", "action": "Talk to real customers and write down how many said yes.", "area": "Market demand",
      "question": "Is there evidence customers want it?",
      "counts": "Interviews, waitlist, pilot, letters of intent or sales, with a number",
      "not_counts": "\"Everyone needs this\", \"huge market\", \"people will love it\"",
      "rule": "must contain a number"},
-    {"id": "solution", "area": "Feasibility",
+    {"id": "solution", "action": "Explain in one line what your product does and how.", "area": "Feasibility",
      "question": "Is the solution described concretely?",
      "counts": "What the product does and how, e.g. \"owner sends a shelf photo, we create a reorder list\"",
      "not_counts": "\"An AI platform\", \"an app like Grab for X\" with no detail"},
-    {"id": "prototype", "area": "Feasibility",
+    {"id": "prototype", "action": "Build a simple working version and let a few customers try it.", "area": "Feasibility",
      "question": "Is there a prototype, MVP or working product?",
      "counts": "Something that exists now, e.g. \"working MVP used by 3 clinics\"",
      "not_counts": "Plans: \"we will build\", \"we plan to launch\"",
      "rule": "must describe something that exists, not a plan"},
-    {"id": "risks", "area": "Feasibility",
+    {"id": "risks", "action": "Name your biggest risk and how you will test it.", "area": "Feasibility",
      "question": "Are key technical, regulatory or operational risks identified?",
      "counts": "A named risk, e.g. \"sensor battery life in heavy rain\"",
      "not_counts": "\"No risks\", \"low risk\""},
-    {"id": "team", "area": "Execution",
+    {"id": "team", "action": "Say who is on the team and what relevant experience they have.", "area": "Execution",
      "question": "Is the team and their relevant experience described?",
      "counts": "Roles or experience, e.g. \"a former clinic manager and a software engineer\"",
      "not_counts": "\"Passionate team\", \"hardworking founders\"",
      "rule": "must mention a role or experience"},
-    {"id": "business_model", "area": "Execution",
+    {"id": "business_model", "action": "State who pays you, and how much.", "area": "Execution",
      "question": "Is it stated how the startup makes money?",
      "counts": "Who pays and how, e.g. \"RM30 per sensor per month\"",
      "not_counts": "\"We will monetise later\", \"ads maybe\"",
      "rule": "must mention a price, fee or who pays"},
-    {"id": "next_milestone", "area": "Execution",
+    {"id": "next_milestone", "action": "Set one clear target with a date, e.g. \"20 paying customers by March 2027\".", "area": "Execution",
      "question": "Is a next milestone with a date or timeframe stated?",
      "counts": "A target with a date, e.g. \"50 paying farms by June 2027\"",
      "not_counts": "\"Grow fast\", \"scale across ASEAN\"",
@@ -60,6 +60,16 @@ NOT_ACHIEVED = "Explicitly not achieved"
 UNVERIFIED = "Quote not found in text"
 FAILS_RULE = "Fails rule"
 MISSING = "Missing"
+
+# Plain-English labels for non-technical readers.
+PLAIN = {
+    "Evidence stated": "Backed by what the founder wrote",
+    "Explicitly not achieved": "Founder says this isn't done yet",
+    "Missing": "Not mentioned",
+    "Fails rule": "Too vague to count",
+    "Quote not found in text": "AI quote didn't match the text (caught and ignored)",
+    "Contradicted in submission": "Contradicted elsewhere in the text",
+}
 
 SOURCE_LABEL = {"text": "Founder said", "slide": "From uploaded slide"}
 

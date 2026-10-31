@@ -141,7 +141,8 @@ application windows are shown as closed. Always confirm on the official page.
 
 ## Repo layout
 
-- `app/main.py`: Streamlit UI (founder side)
+- `app/main.py`: entry point (sidebar pages)
+- `app/builders.py`: Builders page (founder side)
 - `app/pages/2_For_investors.py`: investor side
 - `app/investor.py`: investor framework screening
 - `app/gemma.py`: Gemma 4 extraction (the only AI step)

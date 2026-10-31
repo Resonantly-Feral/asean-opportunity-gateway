@@ -24,6 +24,44 @@ event, so prepare **skills, templates and checklists**, not the project itself.
 | 2:30–3:00 | Plain-language UI pass ("would a C-suite get it in 10 seconds?"). **Feature freeze.** |
 | 3:00–3:30 | Record video (one take), upload, submit. **Submit 15 min early.** |
 
+## The winning formula: looks great + scores well
+
+Winners at this event combined **visual appeal** with a **strong match to the rubric**
+(a gamified project won). Plan both from minute one, not at the end.
+
+### 1. Rubric map (first 20 minutes)
+
+Before coding, list every judging criterion and the prize category's wording.
+For each one, write the **exact demo moment** that proves it:
+
+| Criterion (from rubric / category) | Demo moment that proves it | Owner |
+|---|---|---|
+| e.g. "Multimodal experience" | Upload pitch slide → 8/9 becomes 9/9 | |
+| e.g. "Working prototype" | Live link, real AI call | |
+| e.g. "Clear understanding of the problem" | First 20s of video: the problem in one sentence | |
+| e.g. "Unique / impactful" | Trick text caught live | |
+
+If a criterion has no demo moment, it scores nothing. Ask organisers for the
+full rubric at the briefing.
+
+### 2. Visual polish (budget 30–45 minutes, not the last 5)
+
+- **First screen sells it:** one-line promise, 3-step strip, one big call to action.
+- **One colour theme** and consistent icons; coloured badges for statuses.
+- **Show, don't list:** progress bars, cards, a simple chart or before/after.
+- **Demo data that looks real** (names, places, numbers) so screenshots look good.
+- **Make it fun:** quests, badges, streaks, a satisfying "level up" moment, but only
+  earned by real actions (keep it honest).
+- **Readable on a projector:** large text, high contrast, zoom 125% when demoing.
+- Check every screen on a phone too.
+
+### 3. Keep what worked here
+
+- One working journey first, polish second.
+- AI proposes, rules decide, every result shows its proof.
+- Wow moment in the first 60 seconds of the demo.
+- Real data with sources, honest labels, nothing faked.
+
 ## What judges responded to
 
 - A **live link** that works, plus a clear README

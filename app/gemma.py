@@ -5,8 +5,10 @@ Gemma extracts and quotes. It does not score, rank or decide anything.
 import json
 import os
 import re
+import time
 
 from google import genai
+from google.genai import errors as _errors  # noqa: F401  (makes genai.errors available)
 from google.genai import types
 
 from app.matching import ASEAN, SECTORS, STAGES
@@ -101,5 +103,19 @@ def extract(submission_text, slides=()):
     parts = [types.Part.from_bytes(data=b, mime_type=m) for b, m in slides]
     parts.append(build_prompt(submission_text, bool(parts)))
     client = _client()
-    resp = client.models.generate_content(model=model_name(), contents=parts)
-    return parse_json(resp.text)
+    # Minimal thinking: about 10 seconds instead of 1-2 minutes, same extraction rules.
+    config = types.GenerateContentConfig(thinking_config=types.ThinkingConfig(thinking_level="minimal"))
+    for attempt in range(3):
+        try:
+            resp = client.models.generate_content(model=model_name(), contents=parts, config=config)
+            return parse_json(resp.text)
+        except genai.errors.ClientError as e:
+            if config is not None and "thinking" in str(e).lower():
+                config = None  # this model doesn't support the setting; run without it
+                continue
+            raise
+        except (genai.errors.ServerError, ValueError):
+            # Gemini 5xx errors and malformed JSON are usually transient.
+            if attempt == 2:
+                raise
+            time.sleep(2)

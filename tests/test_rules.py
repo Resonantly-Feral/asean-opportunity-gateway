@@ -66,12 +66,13 @@ def test_parse_json_handles_fences():
     assert parse_json('```json\n{"a": 1}\n```') == {"a": 1}
 
 
+import json
 from pathlib import Path
 
 from app.anomalies import detect
 from app.readiness import FAILS_RULE, hard_rule
 
-SAMPLE = (Path(__file__).resolve().parent.parent / "data" / "sample_submission.txt").read_text()
+SAMPLE = json.loads((Path(__file__).resolve().parent.parent / "data" / "samples.json").read_text())[0]["text"]
 
 
 def test_hard_rules_reject_weak_quotes():

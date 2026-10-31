@@ -28,7 +28,7 @@ ss.setdefault("history", [])   # past assessments, newest last
 ss.setdefault("tracker", [])   # applications the founder is tracking
 
 TRACK_STATES = ["Interested", "Preparing", "Submitted", "Interview", "Accepted", "Rejected"]
-SAMPLE = Path(__file__).resolve().parent.parent / "data" / "sample_submission.txt"
+SAMPLES = json.loads((Path(__file__).resolve().parent.parent / "data" / "samples.json").read_text())
 LEVEL_ICON = {"All addressed": "🟢", "Partly addressed": "🟡", "None addressed": "🔴"}
 VERDICT_ICON = {ELIGIBLE: "✅", UNCLEAR: "❔", NOT_ELIGIBLE: "⛔"}
 
@@ -44,8 +44,13 @@ submit_tab, match_tab, track_tab, rubric_tab = st.tabs(
 
 with submit_tab:
     ss.setdefault("idea_text", "")
-    if st.button("Load sample submission"):
-        ss.idea_text = SAMPLE.read_text()
+    c1, c2 = st.columns([4, 1])
+    pick = c1.selectbox("Try a demo case", [x["name"] for x in SAMPLES])
+    case = next(x for x in SAMPLES if x["name"] == pick)
+    c1.caption(f"What to look for: {case['expect']}")
+    c2.write("")
+    if c2.button("Load sample submission", use_container_width=True):
+        ss.idea_text = case["text"]
     text = st.text_area("Describe your startup idea", height=260, key="idea_text",
                         placeholder="Problem, customers, solution, traction, team, business model, next milestone…")
     slides = st.file_uploader("Pitch deck pages (optional, images)", type=["png", "jpg", "jpeg"],

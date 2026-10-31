@@ -108,7 +108,7 @@ cp .env.example .env   # add GEMINI_API_KEY
 streamlit run app/main.py
 ```
 
-Click **Load sample submission**, then **Assess readiness**.
+Pick a case under **Try a demo case** (7 tested examples, each with what to look for), click **Load sample submission**, then **Assess readiness**.
 
 Tests (rules only, no API key needed):
 
@@ -136,7 +136,7 @@ application windows are shown as closed. Always confirm on the official page.
 - `app/gemma.py`: Gemma 4 extraction (the only AI step)
 - `app/readiness.py`: readiness criteria and rules
 - `app/matching.py`: programme eligibility rules
-- `data/`: programme data and a sample submission
+- `data/`: programme data and 7 demo cases (`samples.json`)
 - `tests/`: rule tests
 - `docs/`: technical notes
 

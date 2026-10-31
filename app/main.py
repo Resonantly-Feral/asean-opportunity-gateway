@@ -6,6 +6,10 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Streamlit reruns this file on every update but keeps imported modules cached.
+# Drop our own modules so a new deploy never mixes old and new code.
+for _m in [m for m in sys.modules if m == "app" or m.startswith("app.")]:
+    del sys.modules[_m]
 
 import streamlit as st
 from dotenv import load_dotenv

@@ -184,3 +184,12 @@ def test_contradicted_claim_is_not_evidence():
     assert len(pairs) == 1
     res = apply_conflicts(assess({"demand_evidence": {"quote": "We have 50 paying customers."}}, text), pairs)
     assert {x["id"]: x["status"] for x in res}["demand_evidence"] == CONTRADICTED
+
+
+def test_unregistered_team_route_is_explained():
+    prog = {"id": "c", "name": "C", "countries": ["Malaysia"], "stages": ["prototype"], "sectors": ["ANY"],
+            "min_team_size_if_unregistered": 2}
+    m = check({"country": "Malaysia", "stage": "prototype", "sector": "retail",
+               "incorporated": False, "team_size": 3}, prog, [])
+    assert m["verdict"] == ELIGIBLE
+    assert any("can apply as individuals" in r for r in m["reasons"])

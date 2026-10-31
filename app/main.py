@@ -36,14 +36,14 @@ TRACK_STATES = ["Interested", "Preparing", "Submitted", "Interview", "Accepted",
 SAMPLES = json.loads((Path(__file__).resolve().parent.parent / "data" / "samples.json").read_text())
 LEVEL_ICON = {"All addressed": "🟢", "Partly addressed": "🟡", "None addressed": "🔴"}
 VERDICT_ICON = {ELIGIBLE: "✅", UNCLEAR: "❔", NOT_ELIGIBLE: "⛔"}
-VERDICT_PLAIN = {ELIGIBLE: "You qualify", UNCLEAR: "Need one answer first", NOT_ELIGIBLE: "Not a fit right now"}
+VERDICT_PLAIN = {ELIGIBLE: "Potential match", UNCLEAR: "Need one answer first", NOT_ELIGIBLE: "Not a fit right now"}
 
 st.title("🌏 ASEAN Opportunity Gateway")
-st.markdown("#### One place for ASEAN startups to see what's missing and where they qualify.")
+st.markdown("#### Discover ASEAN startup opportunities, understand eligibility gaps, and track your next steps.")
 h1, h2, h3 = st.columns(3)
 h1.info("**1. Describe your startup**\n\nIn plain words, like a short pitch.")
 h2.info("**2. See what's backed up**\n\n9 simple questions. AI finds the sentences; fixed rules decide.")
-h3.info("**3. Find programmes you qualify for**\n\nReal ASEAN grants and accelerators, with reasons.")
+h3.info("**3. Find programmes that may fit**\n\nReal ASEAN grants and accelerators, with reasons and what to confirm.")
 st.caption("We check evidence. We never predict success or give made-up percentages.")
 
 DISCLAIMER = ("This is a checklist of what the founder has stated. Nothing here is verified, "
@@ -96,14 +96,18 @@ with submit_tab:
         with st.container(border=True):
             k1, k2, k3 = st.columns(3)
             k1.metric("Questions backed by evidence", f"{met} of {total}")
-            k2.metric("Programmes you qualify for", f"{len(fits)} of {len(matches)}")
-            k3.metric("Warnings", len(flags) + len(conflicts))
+            k2.metric("Potential programme matches", f"{len(fits)} of {len(matches)}",
+                      help="Meets every requirement this app can check. Some requirements must still be "
+                           "confirmed on the official page.")
+            k3.metric("Warnings", len(flags) + len(conflicts),
+                      help="Counts attempts to trick the AI and claims that contradict each other.")
             for area, v in summary.items():
                 words = {"All addressed": "all answered", "Partly addressed": "partly answered",
                          "None addressed": "not answered yet"}[v["level"]]
                 st.markdown(f"{LEVEL_ICON[v['level']]} **{area}:** {words} ({v['met']} of {v['total']})")
             if fits:
-                st.markdown("🎯 **Best fit now:** " + ", ".join(m["programme"]["name"] for m in fits))
+                st.markdown("🎯 **Potential match:** " + ", ".join(m["programme"]["name"] for m in fits)
+                            + " (see Programmes for what to confirm)")
 
         if len(ss.history) > 1:
             gained, lost = changes(ss.history[-2]["results"], results)
@@ -179,7 +183,9 @@ with match_tab:
                    "Requirements change: always confirm on the official page before applying.")
         matched = match_all(profile, load_programmes(), run["results"])
         n_fit = sum(m["verdict"] == ELIGIBLE for m in matched)
-        headline.subheader(f"You qualify for {n_fit} of {len(matched)} programmes")
+        headline.subheader(f"Potential matches: {n_fit} of {len(matched)} programmes")
+        st.caption("A potential match meets every requirement this app can check. It is not confirmed "
+                   "eligibility: each card lists what you still need to confirm.")
         for m in matched:
             p = m["programme"]
             with st.container(border=True):
@@ -189,12 +195,12 @@ with match_tab:
                 st.markdown(p.get("offer", ""))
                 for r in m["reasons"]:
                     st.markdown(f"- {r}")
-                if p.get("not_checked"):
-                    st.markdown("**Also required (check yourself):**\n"
+                if p.get("not_checked") and m["verdict"] != NOT_ELIGIBLE:
+                    st.markdown("**Still to confirm on the official page:**\n"
                                 + "\n".join(f"- {x}" for x in p["not_checked"]))
                 if m["confirm"]:
                     st.markdown(f"**One question to answer:** {m['confirm']}")
-                if m["outstanding"]:
+                if m["outstanding"] and m["verdict"] != NOT_ELIGIBLE:
                     st.markdown("**What this programme will want to see, that's missing:**")
                     for o in m["outstanding"]:
                         st.markdown(f"- {o}")

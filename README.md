@@ -1,6 +1,6 @@
 # ASEAN Opportunity Gateway
 
-🏅 **Top 5 finalist: 5th of 24 projects at Hacktoberfest Hack Day Kuala Lumpur 2026**
+🏆 **Top 5 Winner · Hacktoberfest Hack Day Kuala Lumpur 2026 · 95+ hackers**
 
 **Live demo:** https://asean-opportunity-gateway-cdpzdhdp9mrburpfqbyhhw.streamlit.app/  
 **Demo video:** https://www.youtube.com/watch?v=NiUvv33ymUg
